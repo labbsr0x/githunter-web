@@ -102,7 +102,7 @@ const LanguageIcon = ({ lang }: { lang: string }) => {
   }
 };
 
-const GraphCardComponent: React.FC<GraphCardProps> = ({
+const GraphCard: React.FC<GraphCardProps> = ({
   frequency,
   definitionOSS,
   popularity,
@@ -143,8 +143,8 @@ const GraphCardComponent: React.FC<GraphCardProps> = ({
   );
 };
 
-GraphCardComponent.defaultProps = {
+GraphCard.defaultProps = {
   language: [],
 };
 
-export default GraphCardComponent;
+export default GraphCard;
