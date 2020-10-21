@@ -55,8 +55,6 @@ const plotConfig: PlotParams = {
     },
   ],
   layout: {
-    width: 300,
-    height: 300,
     dragmode: false, // remove zoom
     polar,
     showlegend: false,
@@ -75,6 +73,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     avatar: {
       backgroundColor: 'rgb(255,255,255,0)',
+    },
+    plot: {
+      width: '16rem',
+      height: '16rem',
+    },
+    cardContent: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      display: 'flex',
     },
   }),
 );
@@ -129,11 +136,12 @@ const GraphCard: React.FC<GraphCardProps> = ({
         avatar={<AvatarProviderIcon provider={provider} />}
         title={`${owner}\\${name}`}
       />
-      <CardContent>
+      <CardContent className={classes.cardContent}>
         <Plot
           data={plotConfig.data}
           layout={plotConfig.layout}
           config={plotConfig.config}
+          className={classes.plot}
         />
       </CardContent>
       <CardActions>
