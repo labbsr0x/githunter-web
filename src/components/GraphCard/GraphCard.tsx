@@ -83,6 +83,9 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       display: 'flex',
     },
+    cardActions: {
+      minHeight: 48,
+    },
   }),
 );
 
@@ -144,7 +147,7 @@ const GraphCard: React.FC<GraphCardProps> = ({
           className={classes.plot}
         />
       </CardContent>
-      <CardActions>
+      <CardActions className={classes.cardActions}>
         {language && language.map(lang => LanguageIcon({ lang }))}
       </CardActions>
     </Card>

@@ -19,7 +19,7 @@ const Home: React.FC = () => {
   return (
     <Container maxWidth="md">
       <Grid container spacing={4}>
-        {cards.length &&
+        {cards &&
           cards.map(card => (
             <Grid item xs={12} sm={6} md={4}>
               <GraphCard {...card} />
