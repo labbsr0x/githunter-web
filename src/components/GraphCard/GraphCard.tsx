@@ -45,26 +45,6 @@ const polar: Partial<PolarLayout> = {
   },
 };
 
-const plotConfig: PlotParams = {
-  data: [
-    {
-      type: 'scatterpolar',
-      r: [],
-      theta: dimensions.concat(dimensions[0]), // Adding the first position at end of array to fill the pentagon
-      fill: 'toself',
-    },
-  ],
-  layout: {
-    dragmode: false, // remove zoom
-    polar,
-    showlegend: false,
-    paper_bgcolor: '#FFF',
-  },
-  config: {
-    displayModeBar: false,
-  },
-};
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -125,14 +105,26 @@ const GraphCard: React.FC<GraphCardProps> = ({
 }: GraphCardProps) => {
   const classes = useStyles();
 
-  plotConfig.data[0].r = [
-    frequency,
-    definitionOSS,
-    friendly,
-    popularity,
-    quality,
-    frequency,
-  ];
+  const plotConfig: PlotParams = {
+    data: [
+      {
+        type: 'scatterpolar',
+        r: [frequency, definitionOSS, friendly, popularity, quality, frequency],
+        theta: dimensions.concat(dimensions[0]), // Adding the first position at end of array to fill the pentagon
+        fill: 'toself',
+      },
+    ],
+    layout: {
+      dragmode: false, // remove zoom
+      polar,
+      showlegend: false,
+      paper_bgcolor: '#FFF',
+    },
+    config: {
+      displayModeBar: false,
+    },
+  };
+
   return (
     <Card className={classes.root}>
       <CardHeader
