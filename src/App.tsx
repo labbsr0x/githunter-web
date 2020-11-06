@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   content: {
     flex: 1,
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(7),
     marginBottom: theme.spacing(3),
   },
 }));
