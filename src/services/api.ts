@@ -3,10 +3,10 @@ import moment from 'moment';
 import HttpClient from './httpClient';
 
 export interface Request {
-  startDateTime: string;
-  endDateTime: string;
-  provider: string;
-  node: string;
+  startDateTime?: string;
+  endDateTime?: string;
+  provider?: string;
+  filtersString?: string;
 }
 
 export interface RepositoryStats {
