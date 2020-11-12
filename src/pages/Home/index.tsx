@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
+import _ from 'lodash';
 
 import GraphCard from '../../components/GraphCard/GraphCard';
 import Api, { RepositoryStats } from '../../services/api';
@@ -37,12 +38,27 @@ const useStyles = makeStyles((theme: Theme) =>
 const Home: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<RepositoryStats[]>([]);
+  const [queryFilter, setQueryFilter] = useState('');
 
   useEffect(() => {
     api.getAllRepositories().then(response => {
       setCards(response);
     });
   }, []);
+
+  const delayedSearch = useCallback(
+    _.debounce(query => {
+      api.getAllRepositories({ filtersString: query }).then(response => {
+        setCards(response);
+      });
+    }, 500),
+    [],
+  );
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQueryFilter(event.target.value);
+    delayedSearch(event.target.value);
+  };
 
   return (
     <Container maxWidth="md" className={classes.root}>
@@ -51,6 +67,8 @@ const Home: React.FC = () => {
           className={classes.input}
           placeholder="Search"
           inputProps={{ 'aria-label': 'search' }}
+          value={queryFilter}
+          onChange={handleChange}
         />
       </Paper>
       <Grid container spacing={4}>
