@@ -18,6 +18,14 @@ So on, you're ready to run the application:
 yarn start
 ```
 
+### Run using Docker
+
+To run with docker-compose, open your cloned project and navigate into the root directory. Then, open a terminal session and enter the following:
+
+```bash
+docker-compose up -d
+```
+
 And you can open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ## Contributing

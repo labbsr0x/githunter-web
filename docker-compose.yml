@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  githunter-web:
+    build: .
+    image: githunter-web:1.0
+    restart: always
+    ports:
+      - 3000:3000
