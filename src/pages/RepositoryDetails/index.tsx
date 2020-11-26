@@ -6,7 +6,6 @@ import {
   createStyles,
   Grid,
   makeStyles,
-  Theme,
   Typography,
 } from '@material-ui/core';
 
@@ -27,7 +26,7 @@ interface RouteParams {
 
 const api = new Api();
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       display: 'flex',
