@@ -46,7 +46,8 @@
       "prettier/prettier": "error",
       "react/jsx-props-no-spreading": ["error", {
         "custom": "ignore"
-    }]
+      }],
+      "no-underscore-dangle": "off"
     },
     "settings": {
       "import/resolver": {
