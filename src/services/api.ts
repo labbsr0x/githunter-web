@@ -7,6 +7,7 @@ export interface Request {
   endDateTime?: string;
   provider?: string;
   filtersString?: string;
+  languages?: string[];
 }
 
 export interface RepositoryStats {
@@ -22,6 +23,13 @@ export interface RepositoryStats {
   provider: string;
   type: string;
   language: string[];
+}
+
+export interface Language {
+  _id: string;
+  name: string;
+  createdAt: moment.Moment;
+  updatedAt: moment.Moment;
 }
 
 class Api extends HttpClient {
@@ -40,6 +48,16 @@ class Api extends HttpClient {
           params,
         },
       );
+
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  public async getLanguages(): Promise<Language[]> {
+    try {
+      const response = await this.instance.get<Language[]>('/languages');
 
       return response.data;
     } catch (err) {

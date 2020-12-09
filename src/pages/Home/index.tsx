@@ -20,6 +20,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import Chip from '@material-ui/core/Chip';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -27,15 +29,10 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import _ from 'lodash';
 
-import Api, { RepositoryStats } from '../../services/api';
+import Api, { RepositoryStats, Language } from '../../services/api';
 import GraphCard from '../../components/GraphCard/GraphCard';
 
 const api = new Api();
-
-interface Languages {
-  key: number;
-  label: string;
-}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,13 +82,14 @@ const Home: React.FC = () => {
   const [cards, setCards] = useState<RepositoryStats[]>([]);
   const [queryFilter, setQueryFilter] = useState('');
   const [providersSelected, setProviderSelected] = useState(new Map());
-  const [languages, setLanguages] = React.useState<Languages[]>([
-    { key: 0, label: 'Angular' },
-    { key: 1, label: 'jQuery' },
-    { key: 2, label: 'Polymer' },
-    { key: 3, label: 'React' },
-    { key: 4, label: 'Vue.js' },
-  ]);
+  const [languagesAvailable, setLanguagesAvailable] = React.useState<
+    Language[]
+  >([]);
+  const [inputLanguage, setInputLanguage] = React.useState<string>('');
+  const [selectLanguage, setSelectLanguage] = React.useState<string | null>('');
+  const [languagesForFilter, setLanguagesForFilter] = React.useState<string[]>(
+    [],
+  );
   const [startDate, setStartDate] = React.useState<Date | null>(
     new Date('2014-08-18T21:11:54'),
   );
@@ -102,6 +100,10 @@ const Home: React.FC = () => {
   useEffect(() => {
     api.getAllRepositories().then(response => {
       setCards(response);
+    });
+
+    api.getLanguages().then(response => {
+      setLanguagesAvailable(response);
     });
 
     providers.forEach(provider => {
@@ -134,6 +136,31 @@ const Home: React.FC = () => {
     );
   };
 
+  const handleChangeLanguage = (
+    event: React.ChangeEvent<Record<string, unknown>>,
+    value: string,
+  ) => {
+    setInputLanguage(value);
+  };
+
+  const handleAddLanguage = (
+    event: React.ChangeEvent<Record<string, unknown>>,
+    value: string | null,
+  ) => {
+    if (value) {
+      event.preventDefault();
+
+      setLanguagesForFilter(previous => {
+        return previous.filter(language => language === value).length
+          ? [...languagesForFilter]
+          : [...languagesForFilter, value];
+      });
+
+      setInputLanguage('');
+      setSelectLanguage('');
+    }
+  };
+
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
   };
@@ -142,10 +169,21 @@ const Home: React.FC = () => {
     setEndDate(date);
   };
 
-  const handleDeleteLanguage = (languageToDelete: Languages) => () => {
-    setLanguages(previous =>
-      previous.filter(language => language.key !== languageToDelete.key),
+  const handleDeleteLanguage = (languageToDelete: string) => () => {
+    setLanguagesForFilter(previous =>
+      previous.filter(language => language !== languageToDelete),
     );
+  };
+
+  const handleSearch = () => {
+    api
+      .getAllRepositories({
+        filtersString: queryFilter,
+        languages: languagesForFilter,
+      })
+      .then(response => {
+        setCards(response);
+      });
   };
 
   return (
@@ -197,20 +235,39 @@ const Home: React.FC = () => {
 
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="component-simple">Languages</InputLabel>
-                <Input id="component-simple" />
+                <Autocomplete
+                  id="add-language"
+                  value={selectLanguage}
+                  onChange={handleAddLanguage}
+                  inputValue={inputLanguage}
+                  onInputChange={handleChangeLanguage}
+                  options={
+                    Array.isArray(languagesAvailable)
+                      ? languagesAvailable.map(language => language.name)
+                      : []
+                  }
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      label="Languages"
+                      margin="normal"
+                      variant="outlined"
+                    />
+                  )}
+                />
               </FormControl>
 
               <div className={classes.languages}>
-                {languages.map(language => (
-                  <li key={language.key}>
-                    <Chip
-                      label={language.label}
-                      onDelete={handleDeleteLanguage(language)}
-                      className={classes.chip}
-                    />
-                  </li>
-                ))}
+                {Array.isArray(languagesForFilter) &&
+                  languagesForFilter.map(language => (
+                    <li key={language}>
+                      <Chip
+                        label={language}
+                        onDelete={handleDeleteLanguage(language)}
+                        className={classes.chip}
+                      />
+                    </li>
+                  ))}
               </div>
             </Grid>
 
@@ -251,7 +308,7 @@ const Home: React.FC = () => {
 
         <Divider />
         <AccordionActions>
-          <Button size="small" color="primary">
+          <Button size="small" color="primary" onClick={handleSearch}>
             Apply
           </Button>
         </AccordionActions>
