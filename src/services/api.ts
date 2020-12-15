@@ -77,9 +77,16 @@ class Api extends HttpClient {
         },
       );
 
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  }
+
   public async getLanguages(): Promise<Language[]> {
     try {
       const response = await this.instance.get<Language[]>('/languages');
+
       return response.data;
     } catch (err) {
       return err;
