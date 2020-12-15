@@ -55,11 +55,13 @@ const RepositoryDetails: React.FC = () => {
       startDateTime: moment('20200101').format(),
       endDateTime: moment('20210101').format(),
     };
+
     const params: RequestHistoricParams = {
       dateRange,
       owner,
       name,
     };
+
     api.getRepositoryHistoric(params).then(response => {
       const repos: RepositoryStats[] = response;
       if (Array.isArray(repos)) {
@@ -71,7 +73,7 @@ const RepositoryDetails: React.FC = () => {
         }
       }
     });
-  });
+  }, [name, owner]);
 
   return (
     <Container maxWidth="md" className={classes.root}>
