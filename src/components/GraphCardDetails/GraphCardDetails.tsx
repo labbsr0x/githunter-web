@@ -5,9 +5,10 @@ import Plot, { PlotParams } from 'react-plotly.js';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import { ButtonBase } from '@material-ui/core';
+
+import { Link, Typography } from '@material-ui/core';
+import moment from 'moment';
 import {
   GithubIcon,
   GitlabIcon,
@@ -15,7 +16,8 @@ import {
   PythonIcon,
 } from '../../assets/svg';
 
-interface GraphCardProps {
+interface GraphCardDetailsProps {
+  dateTime: moment.Moment;
   frequency: number;
   definitionOSS: number;
   popularity: number;
@@ -24,7 +26,7 @@ interface GraphCardProps {
   name: string;
   owner: string;
   provider: string;
-  language?: string[];
+  language: string[];
 }
 
 const dimensions: string[] = [
@@ -49,20 +51,32 @@ const polar: Partial<PolarLayout> = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      maxWidth: 345,
-      backgroundColor: theme.palette.background.paper, //
+      maxWidth: '100%',
+      maxHeight: '80%',
+      backgroundColor: theme.palette.background.paper,
+    },
+    cardHeader: {
+      maxHeight: '8%',
+      textAlign: 'end',
+      // paddingRight: '16%',
+      // backgroundColor: 'green',
     },
     avatar: {
       backgroundColor: 'rgb(255,255,255,0)',
     },
     plot: {
-      width: '16rem',
-      height: '16rem',
+      maxWidth: '24rem',
+      maxHeight: '24rem',
+    },
+    details: {
+      flexWrap: 'wrap',
+      display: 'flex',
+    },
+    txtDetails: {
+      fontSize: 18,
     },
     cardContent: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      display: 'flex',
+      flex: 1,
     },
     cardActions: {
       minHeight: 48,
@@ -93,7 +107,8 @@ const LanguageIcon = ({ lang }: { lang: string }) => {
   }
 };
 
-const GraphCard: React.FC<GraphCardProps> = ({
+const GraphCardDetails: React.FC<GraphCardDetailsProps> = ({
+  dateTime,
   frequency,
   definitionOSS,
   popularity,
@@ -102,8 +117,8 @@ const GraphCard: React.FC<GraphCardProps> = ({
   name,
   owner,
   provider,
-  language,
-}: GraphCardProps) => {
+  language = [],
+}: GraphCardDetailsProps) => {
   const classes = useStyles();
 
   const plotConfig: PlotParams = {
@@ -127,37 +142,49 @@ const GraphCard: React.FC<GraphCardProps> = ({
   };
 
   return (
-    <ButtonBase
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-start',
-      }}
-      href={`/${owner}/${name}`}
-    >
+    <>
       <Card className={classes.root}>
         <CardHeader
+          className={classes.cardHeader}
           avatar={<AvatarProviderIcon provider={provider} />}
-          title={`${owner}\\${name}`}
         />
-
-        <CardContent className={classes.cardContent}>
-          <Plot
-            data={plotConfig.data}
-            layout={plotConfig.layout}
-            config={plotConfig.config}
-            className={classes.plot}
-          />
-        </CardContent>
-        <CardActions className={classes.cardActions}>
-          {language && language.map(lang => LanguageIcon({ lang }))}
-        </CardActions>
+        <div className={classes.details}>
+          <CardContent className={classes.cardContent}>
+            <div className={classes.txtDetails}>
+              <Link
+                href={`https://www.${provider}.com/${owner}/${name}`}
+                target="_blank"
+              >
+                {`${owner}/${name}`}
+              </Link>
+              <Typography>{`Last Scraper: ${moment(dateTime).format(
+                'l',
+              )}`}</Typography>
+              <Typography style={{ fontWeight: 'bold' }}>About</Typography>
+              <Typography>
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry.Lorem Ipsum has been the industrys standard dummy text
+                ver since the 1500s, when an unknown printer took a galley of
+                type and scrambled it to make a type specimen book
+              </Typography>
+              <Typography>Starts: 100</Typography>
+              <Typography>Forks: 88</Typography>
+              <Typography style={{ fontWeight: 'bold' }}>Languages</Typography>
+              {language && language.map(lang => LanguageIcon({ lang }))}
+            </div>
+          </CardContent>
+          <CardContent className={classes.cardContent}>
+            <Plot
+              data={plotConfig.data}
+              layout={plotConfig.layout}
+              config={plotConfig.config}
+              className={classes.plot}
+            />
+          </CardContent>
+        </div>
       </Card>
-    </ButtonBase>
+    </>
   );
 };
 
-GraphCard.defaultProps = {
-  language: [],
-};
-
-export default GraphCard;
+export default GraphCardDetails;

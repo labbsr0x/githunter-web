@@ -7,7 +7,8 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import { ButtonBase } from '@material-ui/core';
+
+import moment from 'moment';
 import {
   GithubIcon,
   GitlabIcon,
@@ -15,16 +16,15 @@ import {
   PythonIcon,
 } from '../../assets/svg';
 
-interface GraphCardProps {
+interface GraphCardMinDetailsProps {
+  dateTime: moment.Moment;
   frequency: number;
   definitionOSS: number;
   popularity: number;
   friendly: number;
   quality: number;
-  name: string;
-  owner: string;
   provider: string;
-  language?: string[];
+  language: string[];
 }
 
 const dimensions: string[] = [
@@ -49,7 +49,6 @@ const polar: Partial<PolarLayout> = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      maxWidth: 345,
       backgroundColor: theme.palette.background.paper, //
     },
     avatar: {
@@ -60,6 +59,8 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '16rem',
     },
     cardContent: {
+      width: 396,
+      height: 246,
       alignItems: 'center',
       justifyContent: 'center',
       display: 'flex',
@@ -72,6 +73,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const AvatarProviderIcon = ({ provider }: { provider: string }) => {
   const classes = useStyles();
+
   return (
     <Avatar aria-label="recipe" className={classes.avatar}>
       {provider === 'github' && <GithubIcon />}
@@ -93,17 +95,16 @@ const LanguageIcon = ({ lang }: { lang: string }) => {
   }
 };
 
-const GraphCard: React.FC<GraphCardProps> = ({
+const GraphCardMinDetails: React.FC<GraphCardMinDetailsProps> = ({
+  dateTime,
   frequency,
   definitionOSS,
   popularity,
   friendly,
   quality,
-  name,
-  owner,
   provider,
-  language,
-}: GraphCardProps) => {
+  language = [],
+}: GraphCardMinDetailsProps) => {
   const classes = useStyles();
 
   const plotConfig: PlotParams = {
@@ -127,37 +128,25 @@ const GraphCard: React.FC<GraphCardProps> = ({
   };
 
   return (
-    <ButtonBase
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-start',
-      }}
-      href={`/${owner}/${name}`}
-    >
-      <Card className={classes.root}>
-        <CardHeader
-          avatar={<AvatarProviderIcon provider={provider} />}
-          title={`${owner}\\${name}`}
-        />
+    <Card className={classes.root}>
+      <CardHeader
+        avatar={<AvatarProviderIcon provider={provider} />}
+        title={`Last Update: ${moment(dateTime).format('l')}`}
+      />
 
-        <CardContent className={classes.cardContent}>
-          <Plot
-            data={plotConfig.data}
-            layout={plotConfig.layout}
-            config={plotConfig.config}
-            className={classes.plot}
-          />
-        </CardContent>
-        <CardActions className={classes.cardActions}>
-          {language && language.map(lang => LanguageIcon({ lang }))}
-        </CardActions>
-      </Card>
-    </ButtonBase>
+      <CardContent className={classes.cardContent}>
+        <Plot
+          data={plotConfig.data}
+          layout={plotConfig.layout}
+          config={plotConfig.config}
+          className={classes.plot}
+        />
+      </CardContent>
+      <CardActions className={classes.cardActions}>
+        {language && language.map(lang => LanguageIcon({ lang }))}
+      </CardActions>
+    </Card>
   );
 };
 
-GraphCard.defaultProps = {
-  language: [],
-};
-
-export default GraphCard;
+export default GraphCardMinDetails;

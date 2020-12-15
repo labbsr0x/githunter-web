@@ -10,6 +10,11 @@ export interface Request {
   languages?: string[];
 }
 
+export interface RequestHistoric {
+  startDateTime?: string;
+  endDateTime?: string;
+}
+
 export interface RepositoryStats {
   dateTime: moment.Moment;
   owner: string;
@@ -55,10 +60,26 @@ class Api extends HttpClient {
     }
   }
 
+  public async getRepositoryHistoric({
+    dateRange,
+    owner,
+    name,
+  }: {
+    dateRange: RequestHistoric;
+    owner: string;
+    name: string;
+  }): Promise<RepositoryStats[]> {
+    try {
+      const response = await this.instance.get<RepositoryStats[]>(
+        `/repositories/name/${name}/owner/${owner}`,
+        {
+          params: dateRange,
+        },
+      );
+
   public async getLanguages(): Promise<Language[]> {
     try {
       const response = await this.instance.get<Language[]>('/languages');
-
       return response.data;
     } catch (err) {
       return err;
