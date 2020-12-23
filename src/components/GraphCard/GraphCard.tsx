@@ -7,7 +7,8 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import { ButtonBase } from '@material-ui/core';
+import { ButtonBase, Link, Typography } from '@material-ui/core';
+
 import {
   GithubIcon,
   GitlabIcon,
@@ -15,16 +16,36 @@ import {
   PythonIcon,
 } from '../../assets/svg';
 
-interface GraphCardProps {
+interface GraphCardPlotDimensions {
+  width: string;
+  height: string;
+}
+
+interface GraphCardDetailsContent {
+  lastScraperDate: string;
+  description: string;
+  starts: number;
+  forks: number;
+}
+
+interface GraphCardData {
   frequency: number;
   definitionOSS: number;
   popularity: number;
   friendly: number;
   quality: number;
-  name: string;
-  owner: string;
+  name?: string;
+  owner?: string;
   provider: string;
   language?: string[];
+}
+
+interface GraphCardProps {
+  dataCard: GraphCardData;
+  dimensionsPlot?: GraphCardPlotDimensions;
+  isDetailRepoCard?: boolean;
+  isHistoricRepoCard?: boolean;
+  detailsRepo?: GraphCardDetailsContent;
 }
 
 const dimensions: string[] = [
@@ -49,23 +70,36 @@ const polar: Partial<PolarLayout> = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      maxWidth: 345,
       backgroundColor: theme.palette.background.paper, //
+    },
+    cardHeader: {
+      maxHeight: '8%',
+      textAlign: 'end',
     },
     avatar: {
       backgroundColor: 'rgb(255,255,255,0)',
-    },
-    plot: {
-      width: '16rem',
-      height: '16rem',
     },
     cardContent: {
       alignItems: 'center',
       justifyContent: 'center',
       display: 'flex',
     },
+    cardDetailsContent: {
+      flex: 1,
+    },
+    cardHistoricContent: {
+      width: 396,
+      height: 246,
+    },
     cardActions: {
       minHeight: 48,
+    },
+    details: {
+      flexWrap: 'wrap',
+      display: 'flex',
+    },
+    txtDetails: {
+      fontSize: 18,
     },
   }),
 );
@@ -94,15 +128,11 @@ const LanguageIcon = ({ lang }: { lang: string }) => {
 };
 
 const GraphCard: React.FC<GraphCardProps> = ({
-  frequency,
-  definitionOSS,
-  popularity,
-  friendly,
-  quality,
-  name,
-  owner,
-  provider,
-  language,
+  dataCard,
+  dimensionsPlot,
+  isDetailRepoCard,
+  isHistoricRepoCard,
+  detailsRepo,
 }: GraphCardProps) => {
   const classes = useStyles();
 
@@ -110,7 +140,14 @@ const GraphCard: React.FC<GraphCardProps> = ({
     data: [
       {
         type: 'scatterpolar',
-        r: [frequency, definitionOSS, friendly, popularity, quality, frequency],
+        r: [
+          dataCard.frequency,
+          dataCard.definitionOSS,
+          dataCard.friendly,
+          dataCard.popularity,
+          dataCard.quality,
+          dataCard.frequency,
+        ],
         theta: dimensions.concat(dimensions[0]), // Adding the first position at end of array to fill the pentagon
         fill: 'toself',
       },
@@ -126,30 +163,77 @@ const GraphCard: React.FC<GraphCardProps> = ({
     },
   };
 
-  return (
+  return isDetailRepoCard ? (
+    <Card className={classes.root} style={{ marginBottom: '8%' }}>
+      <CardHeader
+        className={classes.cardHeader}
+        avatar={<AvatarProviderIcon provider={dataCard.provider} />}
+      />
+      <div className={classes.details}>
+        <CardContent className={classes.cardDetailsContent}>
+          <div className={classes.txtDetails}>
+            <Link
+              href={`https://www.${dataCard.provider}.com/${dataCard.owner}/${dataCard.name}`}
+              target="_blank"
+            >
+              {`${dataCard.owner}/${dataCard.name}`}
+            </Link>
+            <Typography>{`Last Scraper: ${detailsRepo?.lastScraperDate}`}</Typography>
+            <Typography style={{ fontWeight: 'bold' }}>About</Typography>
+            <Typography>{detailsRepo?.description}</Typography>
+            <Typography>Starts: {detailsRepo?.starts}</Typography>
+            <Typography>Forks: {detailsRepo?.forks}</Typography>
+            <Typography style={{ fontWeight: 'bold' }}>Languages</Typography>
+            {dataCard.language &&
+              dataCard.language.map(lang => LanguageIcon({ lang }))}
+          </div>
+        </CardContent>
+        <CardContent className={classes.cardDetailsContent}>
+          <Plot
+            data={plotConfig.data}
+            layout={plotConfig.layout}
+            config={plotConfig.config}
+            style={{
+              width: dimensionsPlot?.width,
+              height: dimensionsPlot?.height,
+            }}
+          />
+        </CardContent>
+      </div>
+    </Card>
+  ) : (
     <ButtonBase
       style={{
         display: 'flex',
         justifyContent: 'flex-start',
       }}
-      href={`/${owner}/${name}`}
+      href={`/${dataCard.owner}/${dataCard.name}`}
     >
       <Card className={classes.root}>
         <CardHeader
-          avatar={<AvatarProviderIcon provider={provider} />}
-          title={`${owner}\\${name}`}
+          avatar={<AvatarProviderIcon provider={dataCard.provider} />}
+          title={`${dataCard.owner}\\${dataCard.name}`}
         />
-
-        <CardContent className={classes.cardContent}>
+        <CardContent
+          className={
+            isHistoricRepoCard
+              ? classes.cardHistoricContent
+              : classes.cardContent
+          }
+        >
           <Plot
             data={plotConfig.data}
             layout={plotConfig.layout}
             config={plotConfig.config}
-            className={classes.plot}
+            style={{
+              width: dimensionsPlot?.width,
+              height: dimensionsPlot?.height,
+            }}
           />
         </CardContent>
         <CardActions className={classes.cardActions}>
-          {language && language.map(lang => LanguageIcon({ lang }))}
+          {dataCard.language &&
+            dataCard.language.map((lang: any) => LanguageIcon({ lang }))}
         </CardActions>
       </Card>
     </ButtonBase>
@@ -157,7 +241,18 @@ const GraphCard: React.FC<GraphCardProps> = ({
 };
 
 GraphCard.defaultProps = {
-  language: [],
+  dimensionsPlot: {
+    width: '',
+    height: '',
+  },
+  isDetailRepoCard: false,
+  isHistoricRepoCard: false,
+  detailsRepo: {
+    lastScraperDate: '',
+    description: 'This repository has no description',
+    starts: 0,
+    forks: 0,
+  },
 };
 
 export default GraphCard;
