@@ -10,8 +10,7 @@ import {
 } from '@material-ui/core';
 
 import Api, { RepositoryStats, RequestHistoric } from '../../services/api';
-import GraphCardDetails from '../../components/GraphCardDetails/GraphCardDetails';
-import GraphCardMinDetails from '../../components/GraphCardMinDetails/GraphCardMinDetails';
+import GraphCard from '../../components/GraphCard/GraphCard';
 
 interface RequestHistoricParams {
   dateRange: RequestHistoric;
@@ -79,7 +78,14 @@ const RepositoryDetails: React.FC = () => {
     <Container maxWidth="md" className={classes.root}>
       <div style={{ marginBottom: 36 }}>
         {firstRepository ? (
-          <GraphCardDetails {...firstRepository} />
+          <GraphCard
+            dataCard={firstRepository}
+            isDetailRepoCard
+            dimensionsPlot={{
+              width: '24rem',
+              height: '24rem',
+            }}
+          />
         ) : (
           <Typography>Loading...</Typography>
         )}
@@ -88,7 +94,14 @@ const RepositoryDetails: React.FC = () => {
         {Array.isArray(repositoryHistoric) &&
           repositoryHistoric.map(repo => (
             <Grid className={classes.card} item xs={12} md={6}>
-              <GraphCardMinDetails {...repo} />
+              <GraphCard
+                dataCard={repo}
+                isHistoricRepoCard
+                dimensionsPlot={{
+                  width: '24rem',
+                  height: '24rem',
+                }}
+              />
             </Grid>
           ))}
       </Grid>

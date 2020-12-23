@@ -17,8 +17,6 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -318,7 +316,10 @@ const Home: React.FC = () => {
         {Array.isArray(cards) &&
           cards.map(card => (
             <Grid className={classes.card} item xs={12} sm={6} md={4}>
-              <GraphCard {...card} />
+              <GraphCard
+                dataCard={card}
+                dimensionsPlot={{ width: '16rem', height: '16rem' }}
+              />
             </Grid>
           ))}
       </Grid>
