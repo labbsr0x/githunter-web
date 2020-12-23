@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { PolarLayout } from 'plotly.js';
-import Plot, { PlotParams } from 'react-plotly.js';
+import {
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Legend,
+  Tooltip,
+} from 'recharts';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
@@ -16,9 +22,13 @@ import {
   PythonIcon,
 } from '../../assets/svg';
 
-interface GraphCardPlotDimensions {
-  width: string;
-  height: string;
+interface GraphCardPlotConfig {
+  width: number;
+  height: number;
+  outerRadius: number;
+  positionX?: number;
+  positionY?: number;
+  color?: string;
 }
 
 interface GraphCardDetailsContent {
@@ -42,30 +52,10 @@ interface GraphCardData {
 
 interface GraphCardProps {
   dataCard: GraphCardData;
-  dimensionsPlot?: GraphCardPlotDimensions;
+  configPlot?: GraphCardPlotConfig;
   isDetailRepoCard?: boolean;
-  isHistoricRepoCard?: boolean;
   detailsRepo?: GraphCardDetailsContent;
 }
-
-const dimensions: string[] = [
-  'Frequency',
-  'Definition of OSS',
-  'Friendly',
-  'Popularity',
-  'Quality',
-];
-
-const polar: Partial<PolarLayout> = {
-  angularaxis: { angle: 20 },
-  radialaxis: {
-    visible: true,
-    range: [0, 100],
-    showticklabels: false,
-    ticks: '',
-    showline: false,
-  },
-};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,10 +76,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardDetailsContent: {
       flex: 1,
-    },
-    cardHistoricContent: {
-      width: 396,
-      height: 246,
     },
     cardActions: {
       minHeight: 48,
@@ -129,39 +115,63 @@ const LanguageIcon = ({ lang }: { lang: string }) => {
 
 const GraphCard: React.FC<GraphCardProps> = ({
   dataCard,
-  dimensionsPlot,
+  configPlot,
   isDetailRepoCard,
-  isHistoricRepoCard,
   detailsRepo,
 }: GraphCardProps) => {
+  const [state, setState] = useState({
+    opacity: {
+      value: 1,
+    },
+  });
+
   const classes = useStyles();
 
-  const plotConfig: PlotParams = {
-    data: [
-      {
-        type: 'scatterpolar',
-        r: [
-          dataCard.frequency,
-          dataCard.definitionOSS,
-          dataCard.friendly,
-          dataCard.popularity,
-          dataCard.quality,
-          dataCard.frequency,
-        ],
-        theta: dimensions.concat(dimensions[0]), // Adding the first position at end of array to fill the pentagon
-        fill: 'toself',
-      },
-    ],
-    layout: {
-      dragmode: false, // remove zoom
-      polar,
-      showlegend: false,
-      paper_bgcolor: '#FFF',
-    },
-    config: {
-      displayModeBar: false,
-    },
+  const handleMouseEnter = (o: any) => {
+    const { dataKey } = o;
+    const { opacity } = state;
+
+    setState({
+      opacity: { ...opacity, [dataKey]: 0.5 },
+    });
   };
+
+  const handleMouseLeave = (o: any) => {
+    const { dataKey } = o;
+    const { opacity } = state;
+
+    setState({
+      opacity: { ...opacity, [dataKey]: 1 },
+    });
+  };
+
+  const data = [
+    {
+      name: 'Definition of OSS',
+      value: dataCard.definitionOSS,
+      fullMark: 100,
+    },
+    {
+      name: 'Quality',
+      value: dataCard.quality,
+      fullMark: 100,
+    },
+    {
+      name: 'Frequency',
+      value: dataCard.frequency,
+      fullMark: 100,
+    },
+    {
+      name: 'Popularity',
+      value: dataCard.popularity,
+      fullMark: 100,
+    },
+    {
+      name: 'Friendly',
+      value: dataCard.friendly,
+      fullMark: 100,
+    },
+  ];
 
   return isDetailRepoCard ? (
     <Card className={classes.root} style={{ marginBottom: '8%' }}>
@@ -189,15 +199,29 @@ const GraphCard: React.FC<GraphCardProps> = ({
           </div>
         </CardContent>
         <CardContent className={classes.cardDetailsContent}>
-          <Plot
-            data={plotConfig.data}
-            layout={plotConfig.layout}
-            config={plotConfig.config}
-            style={{
-              width: dimensionsPlot?.width,
-              height: dimensionsPlot?.height,
-            }}
-          />
+          <RadarChart
+            cx={configPlot?.positionX}
+            cy={configPlot?.positionY}
+            outerRadius={configPlot?.outerRadius}
+            width={configPlot?.width}
+            height={configPlot?.height}
+            data={data}
+          >
+            <PolarGrid />
+            <Tooltip />
+            <Legend
+              wrapperStyle={{ display: 'none' }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            />
+            <PolarAngleAxis dataKey="name" />
+            <Radar
+              dataKey="value"
+              stroke={configPlot?.color}
+              fill={configPlot?.color}
+              fillOpacity={0.6}
+            />
+          </RadarChart>
         </CardContent>
       </div>
     </Card>
@@ -214,22 +238,30 @@ const GraphCard: React.FC<GraphCardProps> = ({
           avatar={<AvatarProviderIcon provider={dataCard.provider} />}
           title={`${dataCard.owner}\\${dataCard.name}`}
         />
-        <CardContent
-          className={
-            isHistoricRepoCard
-              ? classes.cardHistoricContent
-              : classes.cardContent
-          }
-        >
-          <Plot
-            data={plotConfig.data}
-            layout={plotConfig.layout}
-            config={plotConfig.config}
-            style={{
-              width: dimensionsPlot?.width,
-              height: dimensionsPlot?.height,
-            }}
-          />
+        <CardContent className={classes.cardContent}>
+          <RadarChart
+            cx={configPlot?.positionX}
+            cy={configPlot?.positionY}
+            outerRadius={configPlot?.outerRadius}
+            width={configPlot?.width}
+            height={configPlot?.height}
+            data={data}
+          >
+            <PolarGrid />
+            <Tooltip />
+            <Legend
+              wrapperStyle={{ display: 'none' }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            />
+            <PolarAngleAxis dataKey="name" />
+            <Radar
+              dataKey="value"
+              stroke={configPlot?.color}
+              fill={configPlot?.color}
+              fillOpacity={0.6}
+            />
+          </RadarChart>
         </CardContent>
         <CardActions className={classes.cardActions}>
           {dataCard.language &&
@@ -241,12 +273,15 @@ const GraphCard: React.FC<GraphCardProps> = ({
 };
 
 GraphCard.defaultProps = {
-  dimensionsPlot: {
-    width: '',
-    height: '',
+  configPlot: {
+    width: 0,
+    height: 0,
+    outerRadius: 0,
+    positionX: 0,
+    positionY: 0,
+    color: '',
   },
   isDetailRepoCard: false,
-  isHistoricRepoCard: false,
   detailsRepo: {
     lastScraperDate: '',
     description: 'This repository has no description',

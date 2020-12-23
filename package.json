@@ -19,12 +19,12 @@
     "date-fns": "^2.16.1",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
-    "plotly.js": "^1.56.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-plotly.js": "^2.5.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "recharts": "^1.8.5",
     "typescript": "~3.7.2"
   },
   "scripts": {
@@ -54,8 +54,8 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.165",
-    "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-dom": "^5.1.6",
+    "@types/recharts": "^1.8.18",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
     "eslint": "6.8.0",
