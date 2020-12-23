@@ -81,9 +81,12 @@ const RepositoryDetails: React.FC = () => {
           <GraphCard
             dataCard={firstRepository}
             isDetailRepoCard
-            dimensionsPlot={{
-              width: '24rem',
-              height: '24rem',
+            configPlot={{
+              width: 492,
+              height: 352,
+              outerRadius: 158,
+              positionX: 492 / 2,
+              color: '#3f51b5',
             }}
           />
         ) : (
@@ -96,10 +99,12 @@ const RepositoryDetails: React.FC = () => {
             <Grid className={classes.card} item xs={12} md={6}>
               <GraphCard
                 dataCard={repo}
-                isHistoricRepoCard
-                dimensionsPlot={{
-                  width: '24rem',
-                  height: '24rem',
+                configPlot={{
+                  width: 100,
+                  height: 100,
+                  outerRadius: 66,
+                  positionX: 100 / 2,
+                  color: '#3f51b5',
                 }}
               />
             </Grid>
