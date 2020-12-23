@@ -315,14 +315,14 @@ const Home: React.FC = () => {
       <Grid container spacing={4}>
         {Array.isArray(cards) &&
           cards.map(card => (
-            <Grid className={classes.card} item xs={12} sm={6} md={4}>
+            <Grid className={classes.card} item xs={12} md={6}>
               <GraphCard
                 dataCard={card}
                 configPlot={{
-                  width: 250,
-                  height: 216,
-                  outerRadius: 70,
-                  positionX: 250 / 2,
+                  width: 408,
+                  height: 242,
+                  outerRadius: 102,
+                  positionX: 408 / 2,
                   color: '#3f51b5',
                 }}
               />
