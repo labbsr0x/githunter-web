@@ -318,7 +318,13 @@ const Home: React.FC = () => {
             <Grid className={classes.card} item xs={12} sm={6} md={4}>
               <GraphCard
                 dataCard={card}
-                dimensionsPlot={{ width: '16rem', height: '16rem' }}
+                configPlot={{
+                  width: 250,
+                  height: 216,
+                  outerRadius: 70,
+                  positionX: 250 / 2,
+                  color: '#3f51b5',
+                }}
               />
             </Grid>
           ))}
