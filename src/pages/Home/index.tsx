@@ -27,6 +27,8 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import _ from 'lodash';
 
+import { Skeleton } from '@material-ui/lab';
+import { Card } from '@material-ui/core';
 import Api, { RepositoryStats, Language } from '../../services/api';
 import GraphCard from '../../components/GraphCard/GraphCard';
 
@@ -78,6 +80,7 @@ const providers = ['github', 'gitlab'];
 const Home: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<RepositoryStats[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [queryFilter, setQueryFilter] = useState('');
   const [providersSelected, setProviderSelected] = useState(new Map());
   const [languagesAvailable, setLanguagesAvailable] = React.useState<
@@ -98,6 +101,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     api.getAllRepositories().then(response => {
       setCards(response);
+      setIsLoading(false);
     });
 
     api.getLanguages().then(response => {
@@ -311,23 +315,89 @@ const Home: React.FC = () => {
           </Button>
         </AccordionActions>
       </Accordion>
-
+      
       <Grid container spacing={4}>
-        {Array.isArray(cards) &&
-          cards.map(card => (
-            <Grid className={classes.card} item xs={12} md={6}>
-              <GraphCard
-                dataCard={card}
-                configPlot={{
-                  width: window.innerWidth > 375 ? 408 : 284,
-                  height: 242,
-                  outerRadius: window.innerWidth > 375 ? 102 : 88,
-                  positionX: window.innerWidth > 375 ? 408 / 2 : 284 / 2,
-                  color: '#3f51b5',
+             {isLoading
+             ? [...Array(6)].map(() => (
+             <Grid
+                style={{
+                  display: 'grid',
+                  justifyContent: 'center',
                 }}
-              />
-            </Grid>
-          ))}
+                item
+                xs={12}
+                md={6}
+             >
+                <Card style={{ backgroundColor: '#f1f0f0', padding: 12 }}>
+                  <Grid
+                    container
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Skeleton
+                      style={{ marginRight: 12 }}
+                      variant="circle"
+                      width={34}
+                      height={34}
+                    />
+                    <Skeleton variant="text" width="82%" />
+                  </Grid>
+                  <Skeleton
+                    variant="rect"
+                    width={window.innerWidth > 375 ? 408 : 284}
+                    height={288}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8,
+                    }}
+                  />
+                  <Grid
+                    container
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Skeleton
+                      style={{ marginRight: 12 }}
+                      variant="circle"
+                      width={34}
+                      height={34}
+                    />
+                    <Skeleton
+                      style={{ marginRight: 12 }}
+                      variant="circle"
+                      width={34}
+                      height={34}
+                    />
+                    <Skeleton
+                      style={{ marginRight: 12 }}
+                      variant="circle"
+                      width={34}
+                      height={34}
+                    />
+                  </Grid>
+                </Card>
+              </Grid>
+            ))
+          : Array.isArray(cards) &&
+            cards.map(card => (
+              <Grid className={classes.card} item xs={12} md={6}>
+                <GraphCard
+                  dataCard={card}
+                  configPlot={{
+                    width: window.innerWidth > 375 ? 408 : 284,
+                    height: 242,
+                    outerRadius: window.innerWidth > 375 ? 102 : 88,
+                    positionX: window.innerWidth > 375 ? 408 / 2 : 284 / 2,
+                    color: '#3f51b5',
+                  }}
+                />
+              </Grid>
+            ))}
       </Grid>
     </Container>
   );
