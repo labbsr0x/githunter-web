@@ -82,10 +82,10 @@ const RepositoryDetails: React.FC = () => {
             dataCard={firstRepository}
             isDetailRepoCard
             configPlot={{
-              width: 492,
-              height: 352,
-              outerRadius: 158,
-              positionX: 492 / 2,
+              width: window.innerWidth > 375 ? 492 : 292,
+              height: window.innerWidth > 375 ? 352 : 288,
+              outerRadius: window.innerWidth > 375 ? 158 : 92,
+              positionX: window.innerWidth > 375 ? 492 / 2 : 292 / 2,
               color: '#3f51b5',
             }}
           />

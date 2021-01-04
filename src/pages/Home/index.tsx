@@ -319,10 +319,10 @@ const Home: React.FC = () => {
               <GraphCard
                 dataCard={card}
                 configPlot={{
-                  width: 408,
+                  width: window.innerWidth > 375 ? 408 : 284,
                   height: 242,
-                  outerRadius: 102,
-                  positionX: 408 / 2,
+                  outerRadius: window.innerWidth > 375 ? 102 : 88,
+                  positionX: window.innerWidth > 375 ? 408 / 2 : 284 / 2,
                   color: '#3f51b5',
                 }}
               />
