@@ -5,7 +5,7 @@ import HttpClient from './httpClient';
 export interface Request {
   startDateTime?: string;
   endDateTime?: string;
-  provider?: string;
+  providers?: string[];
   filtersString?: string;
   languages?: string[];
 }
@@ -31,6 +31,13 @@ export interface RepositoryStats {
 }
 
 export interface Language {
+  _id: string;
+  name: string;
+  createdAt: moment.Moment;
+  updatedAt: moment.Moment;
+}
+
+export interface Provider {
   _id: string;
   name: string;
   createdAt: moment.Moment;
@@ -86,6 +93,16 @@ class Api extends HttpClient {
   public async getLanguages(): Promise<Language[]> {
     try {
       const response = await this.instance.get<Language[]>('/languages');
+
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  public async getProviders(): Promise<Provider[]> {
+    try {
+      const response = await this.instance.get<Provider[]>('/providers');
 
       return response.data;
     } catch (err) {
