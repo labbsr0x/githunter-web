@@ -75,13 +75,12 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const providers = ['github', 'gitlab'];
-
 const Home: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<RepositoryStats[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [queryFilter, setQueryFilter] = useState('');
+  const [providers, setProviders] = useState<string[]>([]);
   const [providersSelected, setProviderSelected] = useState(new Map());
   const [languagesAvailable, setLanguagesAvailable] = React.useState<
     Language[]
@@ -108,8 +107,17 @@ const Home: React.FC = () => {
       setLanguagesAvailable(response);
     });
 
-    providers.forEach(provider => {
-      setProviderSelected(p => new Map(p.set(provider, false)));
+    api.getProviders().then(response => {
+      const temp: string[] = [];
+
+      response.forEach(provider => {
+        setProviderSelected(
+          previous => new Map(previous.set(provider.name, false)),
+        );
+        temp.push(provider.name);
+      });
+
+      setProviders(temp);
     });
   }, []);
 
@@ -182,6 +190,9 @@ const Home: React.FC = () => {
       .getAllRepositories({
         filtersString: queryFilter,
         languages: languagesForFilter,
+        providers: providers.filter(provider =>
+          providersSelected.get(provider),
+        ),
       })
       .then(response => {
         setCards(response);
@@ -315,11 +326,11 @@ const Home: React.FC = () => {
           </Button>
         </AccordionActions>
       </Accordion>
-      
+
       <Grid container spacing={4}>
-             {isLoading
-             ? [...Array(6)].map(() => (
-             <Grid
+        {isLoading
+          ? [...Array(6)].map(() => (
+              <Grid
                 style={{
                   display: 'grid',
                   justifyContent: 'center',
@@ -327,7 +338,7 @@ const Home: React.FC = () => {
                 item
                 xs={12}
                 md={6}
-             >
+              >
                 <Card style={{ backgroundColor: '#f1f0f0', padding: 12 }}>
                   <Grid
                     container
