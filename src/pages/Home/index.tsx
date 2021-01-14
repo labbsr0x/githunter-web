@@ -68,10 +68,6 @@ const useStyles = makeStyles((theme: Theme) =>
     column: {
       flexDirection: 'column',
     },
-    card: {
-      display: 'flex',
-      justifyContent: 'center',
-    },
   }),
 );
 
@@ -200,7 +196,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md" className={classes.root}>
+    <Container maxWidth="lg" className={classes.root}>
       <Paper component="form" className={classes.searchBar}>
         <InputBase
           className={classes.input}
@@ -396,14 +392,14 @@ const Home: React.FC = () => {
             ))
           : Array.isArray(cards) &&
             cards.map(card => (
-              <Grid className={classes.card} item xs={12} md={6}>
+              <Grid item xs={12} md={6}>
                 <GraphCard
                   dataCard={card}
                   configPlot={{
-                    width: window.innerWidth > 375 ? 408 : 284,
+                    width: window.innerWidth > 375 ? 500 : 284,
                     height: 242,
                     outerRadius: window.innerWidth > 375 ? 102 : 88,
-                    positionX: window.innerWidth > 375 ? 408 / 2 : 284 / 2,
+                    positionX: window.innerWidth > 375 ? 500 / 2 : 284 / 2,
                     color: '#3f51b5',
                   }}
                 />
