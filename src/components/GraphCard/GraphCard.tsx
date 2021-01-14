@@ -1,19 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Legend,
-  Tooltip,
-} from 'recharts';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
-import { ButtonBase, Link, Typography } from '@material-ui/core';
+import { Link, Typography } from '@material-ui/core';
 
 import {
   GithubIcon,
@@ -21,6 +13,7 @@ import {
   NodeJSIcon,
   PythonIcon,
 } from '../../assets/svg';
+import RepositoryRadar from '../RepositoryRadar/RepositoryRadar';
 
 interface GraphCardPlotConfig {
   width: number;
@@ -60,7 +53,7 @@ interface GraphCardProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: theme.palette.background.paper, //
+      backgroundColor: theme.palette.background.paper,
     },
     cardHeader: {
       maxHeight: '8%',
@@ -119,59 +112,7 @@ const GraphCard: React.FC<GraphCardProps> = ({
   isDetailRepoCard,
   detailsRepo,
 }: GraphCardProps) => {
-  const [state, setState] = useState({
-    opacity: {
-      value: 1,
-    },
-  });
-
   const classes = useStyles();
-
-  const handleMouseEnter = (o: any) => {
-    const { dataKey } = o;
-    const { opacity } = state;
-
-    setState({
-      opacity: { ...opacity, [dataKey]: 0.5 },
-    });
-  };
-
-  const handleMouseLeave = (o: any) => {
-    const { dataKey } = o;
-    const { opacity } = state;
-
-    setState({
-      opacity: { ...opacity, [dataKey]: 1 },
-    });
-  };
-
-  const data = [
-    {
-      name: 'Definition of OSS',
-      value: dataCard.definitionOSS,
-      fullMark: 100,
-    },
-    {
-      name: 'Quality',
-      value: dataCard.quality,
-      fullMark: 100,
-    },
-    {
-      name: 'Frequency',
-      value: dataCard.frequency,
-      fullMark: 100,
-    },
-    {
-      name: 'Popularity',
-      value: dataCard.popularity,
-      fullMark: 100,
-    },
-    {
-      name: 'Friendly',
-      value: dataCard.friendly,
-      fullMark: 100,
-    },
-  ];
 
   return isDetailRepoCard ? (
     <Card className={classes.root} style={{ marginBottom: '8%' }}>
@@ -199,88 +140,42 @@ const GraphCard: React.FC<GraphCardProps> = ({
           </div>
         </CardContent>
         <CardContent className={classes.cardDetailsContent}>
-          <RadarChart
-            cx={configPlot?.positionX}
-            cy={configPlot?.positionY}
-            outerRadius={configPlot?.outerRadius}
-            width={configPlot?.width}
-            height={configPlot?.height}
-            data={data}
-          >
-            <PolarGrid />
-            <Tooltip />
-            <Legend
-              wrapperStyle={{ display: 'none' }}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            />
-            <PolarAngleAxis dataKey="name" />
-            <Radar
-              dataKey="value"
-              stroke={configPlot?.color}
-              fill={configPlot?.color}
-              fillOpacity={0.6}
-            />
-          </RadarChart>
+          <RepositoryRadar
+            repositoryData={dataCard}
+            configPlot={{
+              width: window.innerWidth > 375 ? 492 : 292,
+              height: window.innerWidth > 375 ? 352 : 288,
+              color: '#3f51b5',
+            }}
+          />
         </CardContent>
       </div>
     </Card>
   ) : (
-    <ButtonBase
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-start',
-      }}
-      href={`/${dataCard.owner}/${dataCard.name}`}
-    >
-      <Card className={classes.root}>
-        <CardHeader
-          avatar={<AvatarProviderIcon provider={dataCard.provider} />}
-          title={`${dataCard.owner}\\${dataCard.name}`}
+    <Card className={classes.root}>
+      <CardHeader
+        avatar={<AvatarProviderIcon provider={dataCard.provider} />}
+        title={`${dataCard.owner}/${dataCard.name}`}
+      />
+      <CardContent className={classes.cardContent}>
+        <RepositoryRadar
+          repositoryData={dataCard}
+          configPlot={{
+            width: '100%',
+            height: 242,
+            color: '#3f51b5',
+          }}
         />
-        <CardContent className={classes.cardContent}>
-          <RadarChart
-            cx={configPlot?.positionX}
-            cy={configPlot?.positionY}
-            outerRadius={configPlot?.outerRadius}
-            width={configPlot?.width}
-            height={configPlot?.height}
-            data={data}
-          >
-            <PolarGrid />
-            <Tooltip />
-            <Legend
-              wrapperStyle={{ display: 'none' }}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            />
-            <PolarAngleAxis dataKey="name" />
-            <Radar
-              dataKey="value"
-              stroke={configPlot?.color}
-              fill={configPlot?.color}
-              fillOpacity={0.6}
-            />
-          </RadarChart>
-        </CardContent>
-        <CardActions className={classes.cardActions}>
-          {dataCard.language &&
-            dataCard.language.map((lang: any) => LanguageIcon({ lang }))}
-        </CardActions>
-      </Card>
-    </ButtonBase>
+      </CardContent>
+      <CardActions className={classes.cardActions}>
+        {dataCard.language &&
+          dataCard.language.map((lang: any) => LanguageIcon({ lang }))}
+      </CardActions>
+    </Card>
   );
 };
 
 GraphCard.defaultProps = {
-  configPlot: {
-    width: 0,
-    height: 0,
-    outerRadius: 0,
-    positionX: 0,
-    positionY: 0,
-    color: '',
-  },
   isDetailRepoCard: false,
   detailsRepo: {
     lastScraperDate: '',
