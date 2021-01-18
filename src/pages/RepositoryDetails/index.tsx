@@ -10,7 +10,8 @@ import {
 } from '@material-ui/core';
 
 import Api, { RepositoryStats, RequestHistoric } from '../../services/api';
-import GraphCard from '../../components/GraphCard/GraphCard';
+import RepositorySummary from '../../components/RepositorySummary/RepositorySummary';
+import RepositoryCard from '../../components/RepositoryCard/RepositoryCard';
 
 interface RequestHistoricParams {
   dateRange: RequestHistoric;
@@ -30,10 +31,6 @@ const useStyles = makeStyles(() =>
     root: {
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
-    },
-    card: {
-      display: 'flex',
       justifyContent: 'center',
     },
   }),
@@ -75,38 +72,19 @@ const RepositoryDetails: React.FC = () => {
   }, [name, owner]);
 
   return (
-    <Container maxWidth="md" className={classes.root}>
+    <Container maxWidth="lg" className={classes.root}>
       <div style={{ marginBottom: 36 }}>
         {firstRepository ? (
-          <GraphCard
-            dataCard={firstRepository}
-            isDetailRepoCard
-            configPlot={{
-              width: window.innerWidth > 375 ? 492 : 292,
-              height: window.innerWidth > 375 ? 352 : 288,
-              outerRadius: window.innerWidth > 375 ? 158 : 92,
-              positionX: window.innerWidth > 375 ? 492 / 2 : 292 / 2,
-              color: '#3f51b5',
-            }}
-          />
+          <RepositorySummary dataCard={firstRepository} />
         ) : (
           <Typography>Loading...</Typography>
         )}
       </div>
-      <Grid container spacing={8}>
+      <Grid container spacing={4}>
         {Array.isArray(repositoryHistoric) &&
           repositoryHistoric.map(repo => (
-            <Grid className={classes.card} item xs={12} md={6}>
-              <GraphCard
-                dataCard={repo}
-                configPlot={{
-                  width: 100,
-                  height: 100,
-                  outerRadius: 66,
-                  positionX: 100 / 2,
-                  color: '#3f51b5',
-                }}
-              />
+            <Grid item xs={12} md={6}>
+              <RepositoryCard dataCard={repo} />
             </Grid>
           ))}
       </Grid>

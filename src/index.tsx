@@ -1,10 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {
+  createMuiTheme,
+  responsiveFontSizes,
+  ThemeProvider,
+} from '@material-ui/core/styles';
 
 import App from './App';
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   overrides: {
     MuiCssBaseline: {
       '@global': {
@@ -13,6 +17,8 @@ const theme = createMuiTheme({
     },
   },
 });
+
+theme = responsiveFontSizes(theme);
 
 ReactDOM.render(
   <React.StrictMode>

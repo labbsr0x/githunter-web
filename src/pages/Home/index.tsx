@@ -30,7 +30,7 @@ import _ from 'lodash';
 import { Skeleton } from '@material-ui/lab';
 import { Card } from '@material-ui/core';
 import Api, { RepositoryStats, Language } from '../../services/api';
-import GraphCard from '../../components/GraphCard/GraphCard';
+import RepositoryCard from '../../components/RepositoryCard/RepositoryCard';
 
 const api = new Api();
 
@@ -393,16 +393,7 @@ const Home: React.FC = () => {
           : Array.isArray(cards) &&
             cards.map(card => (
               <Grid item xs={12} md={6}>
-                <GraphCard
-                  dataCard={card}
-                  configPlot={{
-                    width: window.innerWidth > 375 ? 500 : 284,
-                    height: 242,
-                    outerRadius: window.innerWidth > 375 ? 102 : 88,
-                    positionX: window.innerWidth > 375 ? 500 / 2 : 284 / 2,
-                    color: '#3f51b5',
-                  }}
-                />
+                <RepositoryCard dataCard={card} />
               </Grid>
             ))}
       </Grid>

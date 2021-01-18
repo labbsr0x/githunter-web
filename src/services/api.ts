@@ -16,7 +16,7 @@ export interface RequestHistoric {
 }
 
 export interface RepositoryStats {
-  dateTime: moment.Moment;
+  dateTime?: moment.Moment;
   owner: string;
   name: string;
   frequency: number;
@@ -24,9 +24,9 @@ export interface RepositoryStats {
   popularity: number;
   friendly: number;
   quality: number;
-  rawData: string;
+  rawData?: string;
   provider: string;
-  type: string;
+  type?: string;
   language: string[];
 }
 
