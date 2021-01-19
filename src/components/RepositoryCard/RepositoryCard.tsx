@@ -15,6 +15,7 @@ import {
 import RepositoryRadar from '../RepositoryRadar/RepositoryRadar';
 
 interface RepositoryData {
+  dateTime?: moment.Moment;
   frequency: number;
   definitionOSS: number;
   popularity: number;
@@ -28,6 +29,7 @@ interface RepositoryData {
 
 interface RepositoryCardProps {
   dataCard: RepositoryData;
+  historicCard?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,12 +41,15 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'rgb(255,255,255,0)',
     },
     cardContent: {
+      display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      display: 'flex',
     },
     cardActions: {
       minHeight: 48,
+    },
+    historicCardHead: {
+      textAlign: 'center',
     },
   }),
 );
@@ -74,14 +79,26 @@ const LanguageIcon = ({ lang }: { lang: string }) => {
 
 const RepositoryCard: React.FC<RepositoryCardProps> = ({
   dataCard,
+  historicCard,
 }: RepositoryCardProps) => {
   const classes = useStyles();
 
   return (
     <Card className={classes.root}>
       <CardHeader
-        avatar={<AvatarProviderIcon provider={dataCard.provider} />}
-        title={`${dataCard.owner}/${dataCard.name}`}
+        className={historicCard === true ? classes.historicCardHead : undefined}
+        avatar={
+          historicCard === false ? (
+            <AvatarProviderIcon provider={dataCard.provider} />
+          ) : (
+            false
+          )
+        }
+        title={
+          historicCard === false
+            ? `${dataCard.owner}/${dataCard.name}`
+            : `${dataCard.dateTime}`
+        }
       />
       <CardContent className={classes.cardContent}>
         <RepositoryRadar
@@ -93,12 +110,18 @@ const RepositoryCard: React.FC<RepositoryCardProps> = ({
           }}
         />
       </CardContent>
-      <CardActions className={classes.cardActions}>
-        {dataCard.language &&
-          dataCard.language.map((lang: any) => LanguageIcon({ lang }))}
-      </CardActions>
+      {!historicCard && (
+        <CardActions className={classes.cardActions}>
+          {dataCard.language &&
+            dataCard.language.map((lang: any) => LanguageIcon({ lang }))}
+        </CardActions>
+      )}
     </Card>
   );
+};
+
+RepositoryCard.defaultProps = {
+  historicCard: false,
 };
 
 export default RepositoryCard;
