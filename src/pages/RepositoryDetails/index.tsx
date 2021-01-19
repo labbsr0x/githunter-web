@@ -84,7 +84,7 @@ const RepositoryDetails: React.FC = () => {
         {Array.isArray(repositoryHistoric) &&
           repositoryHistoric.map(repo => (
             <Grid item xs={12} md={6}>
-              <RepositoryCard dataCard={repo} />
+              <RepositoryCard historicCard dataCard={repo} />
             </Grid>
           ))}
       </Grid>
