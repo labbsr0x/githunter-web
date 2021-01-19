@@ -7,6 +7,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Typography } from '@material-ui/core';
 
 import Grid from '@material-ui/core/Grid';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import {
   GithubIcon,
   GitlabIcon,
@@ -84,10 +85,14 @@ const RepositorySummary: React.FC<RepositorySummaryProps> = ({
 
   return (
     <Card className={classes.root}>
-      <CardHeader
-        avatar={<AvatarProviderIcon provider={dataCard.provider} />}
-        title={`${dataCard.owner}/${dataCard.name}`}
-      />
+      <CardActionArea
+        href={`https://www.${dataCard.provider}.com/${dataCard.owner}/${dataCard.name}`}
+      >
+        <CardHeader
+          avatar={<AvatarProviderIcon provider={dataCard.provider} />}
+          title={`${dataCard.owner}/${dataCard.name}`}
+        />
+      </CardActionArea>
       <CardContent>
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>

@@ -6,6 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 
+import { CardActionArea } from '@material-ui/core';
 import {
   GithubIcon,
   GitlabIcon,
@@ -100,16 +101,33 @@ const RepositoryCard: React.FC<RepositoryCardProps> = ({
             : `${dataCard.dateTime}`
         }
       />
-      <CardContent className={classes.cardContent}>
-        <RepositoryRadar
-          repositoryData={dataCard}
-          configPlot={{
-            width: '100%',
-            height: 242,
-            color: '#3f51b5',
-          }}
-        />
-      </CardContent>
+
+      {historicCard ? (
+        <CardContent className={classes.cardContent}>
+          <RepositoryRadar
+            repositoryData={dataCard}
+            configPlot={{
+              width: '100%',
+              height: 242,
+              color: '#3f51b5',
+            }}
+          />
+        </CardContent>
+      ) : (
+        <CardActionArea href={`/${dataCard.owner}/${dataCard.name}`}>
+          <CardContent className={classes.cardContent}>
+            <RepositoryRadar
+              repositoryData={dataCard}
+              configPlot={{
+                width: '100%',
+                height: 242,
+                color: '#3f51b5',
+              }}
+            />
+          </CardContent>
+        </CardActionArea>
+      )}
+
       {!historicCard && (
         <CardActions className={classes.cardActions}>
           {dataCard.language &&
