@@ -87,11 +87,9 @@ const Home: React.FC = () => {
     [],
   );
   const [startDate, setStartDate] = React.useState<Date | null>(
-    new Date('2014-08-18T21:11:54'),
+    new Date('2020-01-01T00:00:00'),
   );
-  const [endDate, setEndDate] = React.useState<Date | null>(
-    new Date('2014-08-18T21:11:54'),
-  );
+  const [endDate, setEndDate] = React.useState<Date | null>(new Date());
 
   useEffect(() => {
     api.getAllRepositories().then(response => {
@@ -189,6 +187,8 @@ const Home: React.FC = () => {
         providers: providers.filter(provider =>
           providersSelected.get(provider),
         ),
+        startDateTime: startDate?.toISOString(),
+        endDateTime: endDate?.toISOString(),
       })
       .then(response => {
         setCards(response);
@@ -303,6 +303,8 @@ const Home: React.FC = () => {
                     margin="normal"
                     id="date-picker-end"
                     label="From"
+                    minDate={startDate}
+                    minDateMessage="End date should not be before start date"
                     value={endDate}
                     onChange={handleEndDateChange}
                     KeyboardButtonProps={{
