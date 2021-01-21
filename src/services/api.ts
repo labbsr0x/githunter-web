@@ -13,6 +13,8 @@ export interface Request {
 export interface RequestHistoric {
   startDateTime?: string;
   endDateTime?: string;
+  owner: string;
+  name: string;
 }
 
 export interface RepositoryStats {
@@ -67,20 +69,14 @@ class Api extends HttpClient {
     }
   }
 
-  public async getRepositoryHistoric({
-    dateRange,
-    owner,
-    name,
-  }: {
-    dateRange: RequestHistoric;
-    owner: string;
-    name: string;
-  }): Promise<RepositoryStats[]> {
+  public async getRepositoryHistoric(
+    params: RequestHistoric,
+  ): Promise<RepositoryStats[]> {
     try {
       const response = await this.instance.get<RepositoryStats[]>(
-        `/repositories/name/${name}/owner/${owner}`,
+        `/repositories/name/${params.name}/owner/${params.owner}`,
         {
-          params: dateRange,
+          params,
         },
       );
 
