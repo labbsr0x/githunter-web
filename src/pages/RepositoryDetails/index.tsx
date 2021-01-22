@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import moment from 'moment';
 import {
   Container,
   createStyles,
@@ -9,12 +8,13 @@ import {
   Typography,
 } from '@material-ui/core';
 
-import Api, { RepositoryStats, RequestHistoric } from '../../services/api';
+import Api, { RepositoryStats } from '../../services/api';
 import RepositorySummary from '../../components/RepositorySummary/RepositorySummary';
 import RepositoryCard from '../../components/RepositoryCard/RepositoryCard';
 
 interface RequestHistoricParams {
-  dateRange: RequestHistoric;
+  startDateTime?: string;
+  endDateTime?: string;
   owner: string;
   name: string;
 }
@@ -47,13 +47,7 @@ const RepositoryDetails: React.FC = () => {
   >([]);
 
   useEffect(() => {
-    const dateRange: RequestHistoric = {
-      startDateTime: moment('20200101').format(),
-      endDateTime: moment('20210101').format(),
-    };
-
     const params: RequestHistoricParams = {
-      dateRange,
       owner,
       name,
     };
