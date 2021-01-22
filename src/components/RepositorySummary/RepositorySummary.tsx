@@ -9,10 +9,13 @@ import { Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import {
+  ActionScriptIcon,
   GithubIcon,
   GitlabIcon,
   NodeJSIcon,
+  OthersTypesIcon,
   PythonIcon,
+  ShellIcon,
 } from '../../assets/svg';
 import RepositoryRadar from '../RepositoryRadar/RepositoryRadar';
 
@@ -58,22 +61,27 @@ const AvatarProviderIcon = ({ provider }: { provider: string }) => {
   const classes = useStyles();
   return (
     <Avatar aria-label="recipe" className={classes.avatar}>
-      {provider === 'github' && <GithubIcon />}
-      {provider === 'gitlab' && <GitlabIcon />}
+      {provider === 'github' && <GithubIcon title={provider} />}
+      {provider === 'gitlab' && <GitlabIcon title={provider} />}
     </Avatar>
   );
 };
 
 const LanguageIcon = ({ lang }: { lang: string }) => {
-  switch (lang) {
-    case 'Node.js':
+  const language = lang.toLowerCase();
+  switch (language) {
     case 'nodejs':
-      return <NodeJSIcon />;
+      return <NodeJSIcon title={lang} />;
     case 'python':
-      return <PythonIcon />;
+      return <PythonIcon title={lang} />;
+    case 'shell':
+    case 'bash':
+      return <ShellIcon title={lang} />;
+    case 'actionscript':
+      return <ActionScriptIcon title={lang} />;
 
     default:
-      return <span>{lang}</span>;
+      return <OthersTypesIcon title={lang} />;
   }
 };
 
