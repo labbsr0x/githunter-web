@@ -76,7 +76,10 @@ class Api extends HttpClient {
       const response = await this.instance.get<RepositoryStats[]>(
         `/repositories/name/${params.name}/owner/${params.owner}`,
         {
-          params,
+          params: {
+            startDateTime: params.startDateTime,
+            endDateTime: params.endDateTime,
+          },
         },
       );
 
