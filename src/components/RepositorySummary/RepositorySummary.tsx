@@ -3,21 +3,14 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import Avatar from '@material-ui/core/Avatar';
 import { Typography } from '@material-ui/core';
-
 import Grid from '@material-ui/core/Grid';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import {
-  ActionScriptIcon,
-  GithubIcon,
-  GitlabIcon,
-  NodeJSIcon,
-  OthersTypesIcon,
-  PythonIcon,
-  ShellIcon,
-} from '../../assets/svg';
+
+import CardActions from '@material-ui/core/CardActions';
 import RepositoryRadar from '../RepositoryRadar/RepositoryRadar';
+import AvatarProviderIcon from '../AvatarProviderIcon/AvatarProviderIcon';
+import LanguageIcon from '../LanguageIcon/LanguageIcon';
 
 interface RepositoryDetails {
   lastScraperDate: string;
@@ -48,42 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       backgroundColor: theme.palette.background.paper,
     },
-    avatar: {
-      backgroundColor: 'rgb(255,255,255,0)',
-    },
-    txtDetails: {
-      fontSize: 18,
-    },
   }),
 );
-
-const AvatarProviderIcon = ({ provider }: { provider: string }) => {
-  const classes = useStyles();
-  return (
-    <Avatar aria-label="recipe" className={classes.avatar}>
-      {provider === 'github' && <GithubIcon title={provider} />}
-      {provider === 'gitlab' && <GitlabIcon title={provider} />}
-    </Avatar>
-  );
-};
-
-const LanguageIcon = ({ lang }: { lang: string }) => {
-  const language = lang.toLowerCase();
-  switch (language) {
-    case 'nodejs':
-      return <NodeJSIcon title={lang} />;
-    case 'python':
-      return <PythonIcon title={lang} />;
-    case 'shell':
-    case 'bash':
-      return <ShellIcon title={lang} />;
-    case 'actionscript':
-      return <ActionScriptIcon title={lang} />;
-
-    default:
-      return <OthersTypesIcon title={lang} />;
-  }
-};
 
 const RepositorySummary: React.FC<RepositorySummaryProps> = ({
   dataCard,
@@ -101,6 +60,7 @@ const RepositorySummary: React.FC<RepositorySummaryProps> = ({
           title={`${dataCard.owner}/${dataCard.name}`}
         />
       </CardActionArea>
+
       <CardContent>
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
@@ -108,8 +68,6 @@ const RepositorySummary: React.FC<RepositorySummaryProps> = ({
             <Typography>{`Last Scraper: ${detailsRepo?.lastScraperDate}`}</Typography>
             <Typography>Stars: {detailsRepo?.stars}</Typography>
             <Typography paragraph>Forks: {detailsRepo?.forks}</Typography>
-            {dataCard.language &&
-              dataCard.language.map(lang => LanguageIcon({ lang }))}
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -124,6 +82,11 @@ const RepositorySummary: React.FC<RepositorySummaryProps> = ({
           </Grid>
         </Grid>
       </CardContent>
+
+      <CardActions>
+        {dataCard.language &&
+          dataCard.language.map((lang: any) => LanguageIcon({ lang }))}
+      </CardActions>
     </Card>
   );
 };

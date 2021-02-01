@@ -4,19 +4,11 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-
 import { CardActionArea } from '@material-ui/core';
-import {
-  ActionScriptIcon,
-  GithubIcon,
-  GitlabIcon,
-  NodeJSIcon,
-  OthersTypesIcon,
-  PythonIcon,
-  ShellIcon,
-} from '../../assets/svg';
+
 import RepositoryRadar from '../RepositoryRadar/RepositoryRadar';
+import AvatarProviderIcon from '../AvatarProviderIcon/AvatarProviderIcon';
+import LanguageIcon from '../LanguageIcon/LanguageIcon';
 
 interface RepositoryData {
   dateTime?: moment.Moment;
@@ -41,9 +33,6 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       backgroundColor: theme.palette.background.paper,
     },
-    avatar: {
-      backgroundColor: 'rgb(255,255,255,0)',
-    },
     cardContent: {
       display: 'flex',
       alignItems: 'center',
@@ -57,35 +46,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-
-const AvatarProviderIcon = ({ provider }: { provider: string }) => {
-  const classes = useStyles();
-  return (
-    <Avatar aria-label="recipe" className={classes.avatar}>
-      {provider === 'github' && <GithubIcon title={provider} />}
-      {provider === 'gitlab' && <GitlabIcon title={provider} />}
-    </Avatar>
-  );
-};
-
-const LanguageIcon = ({ lang }: { lang: string }) => {
-  const language = lang.toLowerCase();
-  switch (language) {
-    case 'node.js':
-    case 'nodejs':
-      return <NodeJSIcon title={lang} />;
-    case 'python':
-      return <PythonIcon title={lang} />;
-    case 'shell':
-    case 'bash':
-      return <ShellIcon title={lang} />;
-    case 'actionscript':
-      return <ActionScriptIcon title={lang} />;
-
-    default:
-      return <OthersTypesIcon title={lang} />;
-  }
-};
 
 const RepositoryCard: React.FC<RepositoryCardProps> = ({
   dataCard,
